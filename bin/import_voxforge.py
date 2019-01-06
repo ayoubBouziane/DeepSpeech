@@ -3,6 +3,8 @@ from __future__ import absolute_import, division, print_function
 
 import codecs
 import sys
+import os
+sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
 import tarfile
 import pandas
@@ -18,7 +20,6 @@ from bs4 import BeautifulSoup
 from tensorflow.python.platform import gfile
 from util.downloader import maybe_download
 
-sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
 """The number of jobs to run in parallel"""
 NUM_PARALLEL = 8
