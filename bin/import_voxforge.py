@@ -117,7 +117,7 @@ def _download_and_preprocess_data(data_dir):
     if not path.isdir(archive_dir):
         makedirs(archive_dir)
 
-    print("Downloading Voxforge data set into {} if not already present...".format(archive_dir))
+    print("1. Downloading Voxforge data set into {} if not already present...".format(archive_dir))
 
     voxforge_url = 'http://www.repository.voxforge1.org/downloads/SpeechCorpus/Trunk/Audio/Main/16kHz_16bit'
     html_page = urllib.request.urlopen(voxforge_url)
@@ -146,20 +146,24 @@ def _download_and_preprocess_data(data_dir):
     number_of_dev = number_of_files//100
 
     # extract tars in parallel
-    print("Extracting Voxforge data set into {} if not already present...".format(data_dir))
+    print("2. Extracting Voxforge data set into {} if not already present...".format(data_dir))
     extracter = _parallel_extracter(data_dir, number_of_test, number_of_dev, len(tarfiles), AtomicCounter())
     p.map(extracter, enumerate(tarfiles))
 
-    # Generate data set
-    print("Generating Voxforge data set into {}".format(data_dir))
+    # Generate data set & Write them to disk as CSV files
+    
+    print("3. Generating Voxforge data set into {}".format(data_dir))
     test_files = _generate_dataset(data_dir, "test")
-    dev_files = _generate_dataset(data_dir, "dev")
-    train_files = _generate_dataset(data_dir, "train")
-
-    # Write sets to disk as CSV files
-    train_files.to_csv(path.join(data_dir, "voxforge-train.csv"), index=False)
-    dev_files.to_csv(path.join(data_dir, "voxforge-dev.csv"), index=False)
     test_files.to_csv(path.join(data_dir, "voxforge-test.csv"), index=False)
+    print("3.1 Test files were generated - {} Files - {} Hours - {} Texts".format(len(test_files.index), test_files['wav_filesize'].sum(), test_files['transcript'].nunique()))
+    
+    dev_files = _generate_dataset(data_dir, "dev")
+    dev_files.to_csv(path.join(data_dir, "voxforge-dev.csv"), index=False)
+    print("3.2 Dev files were generated - {} Files - {} Hours - {} Texts".format(len(dev_files.index), dev_files['wav_filesize'].sum(), dev_files['transcript'].nunique()))
+
+    train_files = _generate_dataset(data_dir, "train")
+    train_files.to_csv(path.join(data_dir, "voxforge-train.csv"), index=False)
+    print("3.3 Train files were generated - {} Files - {} Hours - {} Texts".format(len(train_files.index), train_files['wav_filesize'].sum(), train_files['transcript'].nunique()))
 
 def _generate_dataset(data_dir, data_set):
     extracted_dir = path.join(data_dir, data_set)
