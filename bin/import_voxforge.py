@@ -71,7 +71,7 @@ def _parallel_downloader(voxforge_url, archive_dir, total, counter):
         (i, file) = d
         download_url = voxforge_url + '/' + file
         c = counter.increment()
-        print('Downloading file {} ({}/{})...'.format(i+1, c, total))
+        #print('Downloading file {} ({}/{})...'.format(i+1, c, total))
         maybe_download(filename_of(download_url), archive_dir, download_url)
     return download
 
