@@ -127,7 +127,7 @@ def _download_and_preprocess_data(data_dir):
     refs = [l['href'] for l in soup.find_all('a') if ".tgz" in l['href']]
 
     # download files in parallel
-    print('{} files to download'.format(len(refs)))
+    print('1.1 {} files to download'.format(len(refs)))
     downloader = _parallel_downloader(voxforge_url, archive_dir, len(refs), AtomicCounter())
     p = ThreadPool(NUM_PARALLEL)
     p.map(downloader, enumerate(refs))
@@ -196,7 +196,5 @@ def _generate_dataset(data_dir, data_set):
 
 if __name__=="__main__":
     _download_and_preprocess_data(sys.argv[1])
-
-
 
 
